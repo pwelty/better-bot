@@ -34,42 +34,56 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $messagings = $entry->messaging;
     $messaging = $messagings[0];
     $senderId = $messaging->sender->id;
-    $message = $messaging->message;
     $person = getUserProfile($senderId);
-    if (isset($message->quick_reply)) {
-      $payload = $message->quick_reply->payload;
-      $replyText = $payload.' was clicked, '.$person->first_name;
-      sendTextMessage($senderId,$replyText);
-    } else {
-      if (strtolower($message->text)=='help') {
-        $button1 = new stdClass;
-        $button1->type = 'web_url';
-        $button1->url = 'http://www.livingyourbetter.com/';
-        $button1->title = 'Visit the LYB website';
-        $button2 = new stdClass;
-        $button2->type = 'postback';
-        $button2->title = 'What\'s Beachbody?';
-        $button2->payload = 'BB_Q';
-        $buttons = array($button1,$button2);
-        sendButtonTemplate($senderId,'So you need some help? No problem! What can I do for you?',$buttons);
-      } else {
-        $replyText = $message->text.' received, '.$person->first_name;
+
+
+    if (isset($messaging->message)) {
+
+      $message = $messaging->message;
+      if (isset($message->quick_reply)) {
+        $payload = $message->quick_reply->payload;
+        $replyText = $payload.' was clicked, '.$person->first_name;
         sendTextMessage($senderId,$replyText);
-        $replyOption1 = new stdClass;
-        $replyOption1->content_type = "text";
-        $replyOption1->title = "Option 1";
-        $replyOption1->payload = "Option 1";
-        $replyOptions[]=$replyOption1;
-        $replyOption2 = new stdClass;
-        $replyOption2->content_type = "text";
-        $replyOption2->title = "Option 2";
-        $replyOption2->payload = "Option 2";
-        $replyOptions[]=$replyOption2;
-        sendQuickReply($senderId,"Pick something",$replyOptions);
+      } else {
+        if (strtolower($message->text)=='help') {
+          $button1 = new stdClass;
+          $button1->type = 'web_url';
+          $button1->url = 'http://www.livingyourbetter.com/';
+          $button1->title = 'Visit the LYB website';
+          $button2 = new stdClass;
+          $button2->type = 'postback';
+          $button2->title = 'What\'s Beachbody?';
+          $button2->payload = 'BB_Q';
+          $buttons = array($button1,$button2);
+          sendButtonTemplate($senderId,'So you need some help? No problem! What can I do for you?',$buttons);
+        } else {
+          $replyText = $message->text.' received, '.$person->first_name;
+          sendTextMessage($senderId,$replyText);
+          $replyOption1 = new stdClass;
+          $replyOption1->content_type = "text";
+          $replyOption1->title = "Option 1";
+          $replyOption1->payload = "Option 1";
+          $replyOptions[]=$replyOption1;
+          $replyOption2 = new stdClass;
+          $replyOption2->content_type = "text";
+          $replyOption2->title = "Option 2";
+          $replyOption2->payload = "Option 2";
+          $replyOptions[]=$replyOption2;
+          sendQuickReply($senderId,"Pick something",$replyOptions);
+        }
       }
+
+    } elseif (isset($messaging->postback)) {
+
+        $postback = $messaging->postback;
+        $payload = $postback->payload;
+        $replyText = $payload.' was selected, '.$person->first_name;
+        sendTextMessage($senderId,$replyText);
+
+    } else {
+      // I don't know what else there is to do!
     }
-    // exit;
-    //$recipientId = $messaging->recipient->id;
+
     break;
 }
 
