@@ -51,7 +51,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $replyOption->title = "Option 2";
     $replyOption->payload = "Option 2";
     $replyOptions[]=$replyOption;
-    sendQuickReply($senderId,"Pick something",$replyOptions)
+    sendQuickReply($senderId,"Pick something",$replyOptions);
     break;
 }
 
