@@ -46,8 +46,10 @@ function sendMessage($recipientId,$text) {
 function postSomething($messageData) {
   $token = getenv('PAGE_ACCESS_TOKEN');
   $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$token;
+  error_log("url=".$url);
 
   $postData = json_encode($messageData);
+  error_log("json=".$postData);
 
   //Set headers
   // $headers = array();
