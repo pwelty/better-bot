@@ -59,14 +59,14 @@ function postSomething($messageData) {
   $postData = json_encode($messageData);
   error_log("json=".$postData);
 
-  //Set headers
-  // $headers = array();
-  // $headers['Content-Type'] = 'application/json; charset=UTF8';
-  // $headers['X-Accept'] = 'application/json';
-  // $realHeaders = array();
-  // foreach($headers as $k=>$v){
-  //   $realHeaders[] = $k.": ".$v;
-  // }
+  // Set headers
+  $headers = array();
+  $headers['Content-Type'] = 'application/json; charset=UTF8';
+  $headers['X-Accept'] = 'application/json';
+  $realHeaders = array();
+  foreach($headers as $k=>$v){
+    $realHeaders[] = $k.": ".$v;
+  }
 
   $options = array(
     CURLOPT_RETURNTRANSFER => true,     // return web page
@@ -80,8 +80,8 @@ function postSomething($messageData) {
     CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
     CURLOPT_POST 		   	   => 1,
     CURLOPT_POSTFIELDS     => $postData,
-    // CURLOPT_HTTPHEADER	   => $realHeaders,
-    // CURLINFO_HEADER_OUT	   => true,
+    CURLOPT_HTTPHEADER	   => $realHeaders,
+    CURLINFO_HEADER_OUT	   => true,
   );
   $curlHandle = curl_init($url);
   curl_setopt_array($curlHandle, $options);
@@ -89,6 +89,7 @@ function postSomething($messageData) {
   if (curl_error($curlHandle)) {
     error_log('error:' . curl_error($curlHandle));
   }
+  error_log('fb response = '.$response);
   return $response;
 }
 
