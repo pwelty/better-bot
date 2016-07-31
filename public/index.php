@@ -76,7 +76,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 function sendButtonTemplate($recipientId,$text,$buttons) {
   $message = new stdClass;
   $message->attachment->type='template';
-  $message->attachment->payload->template_type = 'buttons';
+  $message->attachment->payload->template_type = 'button';
   $message->attachment->payload->text = $text;
   $message->attachment->payload->buttons = $buttons;
   sendMessage($recipientId,$message);
