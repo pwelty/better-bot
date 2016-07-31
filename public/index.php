@@ -28,6 +28,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     error_log($post);
     $postObj = json_decode($post);
     $entry = $postObj->entry;
+    error_log(print_r($postObj,true));
     $messaging = $entry->messaging;
     $message = $messaging->message;
     $recipientId = $messaging->recipientId;
