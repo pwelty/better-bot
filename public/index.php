@@ -4,25 +4,82 @@ require('../vendor/autoload.php');
 
 // echo "running";
 // error_log("hello, this is a test!");
-$x = print_r($_GET,true);
-error_log($x);
-$x = print_r($_POST,true);
-error_log($x);
-$post = file_get_contents('php://input');
-error_log($post);
+// $x = print_r($_POST,true);
+// error_log($x);
 
-$hub_mode = $_GET['hub_mode'];
-$hub_challenge = $_GET['hub_challenge'];
-$hub_verify_token = $_GET['hub_verify_token'];
-
-switch ($hub_mode) {
-  case 'subscribe':
-    error_log ("Subscribe");
-    if ($hub_verify_token==getenv('VERIFY_TOKEN')) {
-      echo($hub_challenge);
+switch ($_SERVER['REQUEST_METHOD']) {
+  case 'GET':
+    $x = print_r($_GET,true);
+    error_log($x);
+    $hub_mode = $_GET['hub_mode'];
+    switch ($hub_mode) {
+      case 'subscribe':
+        $hub_challenge = $_GET['hub_challenge'];
+        $hub_verify_token = $_GET['hub_verify_token'];
+        error_log ("Subscribe");
+        if ($hub_verify_token==getenv('VERIFY_TOKEN')) {
+          echo($hub_challenge);
+        }
+        break;
     }
     break;
+  case 'POST':
+    $post = file_get_contents('php://input');
+    error_log($post);
+    $postObj = json_decode($post);
+    $entry = $postObj->entry;
+    $messaging = $entry->messaging;
+    $message = $messaging->message;
+    $recipientId = $messaging->recipientId;
+    $replyText = $message->text.' received';
+    sendMessage($recipientId,$replyText);
+    break;
+}
 
+function sendMessage($recipientId,$text) {
+    $sendArray = ();
+    $sendArray['recipient']['id']=$recipientId;
+    $sendArray['message']['text']=$text;
+    return postSomething($sendArray);
+}
+
+function postSomething($messageData) {
+  $token = getenv('PAGE_ACCESS_TOKEN');
+  $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$token;
+
+  $postData = json_encode($messageData);
+
+  //Set headers
+  // $headers = array();
+  // $headers['Content-Type'] = 'application/json; charset=UTF8';
+  // $headers['X-Accept'] = 'application/json';
+  // $realHeaders = array();
+  // foreach($headers as $k=>$v){
+  //   $realHeaders[] = $k.": ".$v;
+  // }
+
+  $options = array(
+    CURLOPT_RETURNTRANSFER => true,     // return web page
+    // CURLOPT_HEADER         => true,
+    CURLOPT_FOLLOWLOCATION => true,     // follow redirects
+    CURLOPT_ENCODING       => "UTF8",       //
+    CURLOPT_USERAGENT      => "Better Bot", // who am i
+    CURLOPT_AUTOREFERER    => true,     // set referer on redirect
+    CURLOPT_CONNECTTIMEOUT => 120,      // timeout on connect
+    CURLOPT_TIMEOUT        => 120,      // timeout on response
+    CURLOPT_MAXREDIRS      => 10,       // stop after 10 redirects
+    CURLOPT_POST 		   	   => 1,
+    CURLOPT_POSTFIELDS     => $postData,
+    // CURLOPT_HTTPHEADER	   => $realHeaders,
+    // CURLINFO_HEADER_OUT	   => true,
+  );
+  $curlHandle = curl_init($url);
+  curl_setopt_array($curlHandle, $options);
+  $response = curl_exec($curlHandle);
+  if (curl_error($curlHandle)) {
+    error_log('error:' . curl_error($curlHandle));
+  }
+  return $response;
 }
 
 ?>
