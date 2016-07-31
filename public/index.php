@@ -8,6 +8,8 @@ $x = print_r($_GET,true);
 error_log($x);
 $x = print_r($_POST,true);
 error_log($x);
+$post = file_get_contents('php://input');
+error_log($post);
 
 $hub_mode = $_GET['hub_mode'];
 $hub_challenge = $_GET['hub_challenge'];
