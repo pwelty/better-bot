@@ -6,6 +6,8 @@ require('../vendor/autoload.php');
 // error_log("hello, this is a test!");
 $x = print_r($_GET,true);
 error_log($x);
+$x = print_r($_POST,true);
+error_log($x);
 
 $hub_mode = $_GET['hub_mode'];
 $hub_challenge = $_GET['hub_challenge'];
