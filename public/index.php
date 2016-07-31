@@ -37,7 +37,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $senderID = $messaging->sender->id;
     error_log("sender id = ".$senderID);
     error_log("message text = ".$message->text);
-    exit;
+    // exit;
     $recipientId = $messaging->recipient->id;
     $replyText = $message->text.' received';
     sendMessage($senderId,$replyText);
