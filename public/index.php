@@ -7,9 +7,9 @@ require('../vendor/autoload.php');
 $x = print_r($_GET,true);
 error_log($x);
 
-$hub_mode = $_GET['hub.mode'];
-$hub_challenge = $_GET['hub.challenge'];
-$hub_verify_token = $_GET['hub.verify_token'];
+$hub_mode = $_GET['hub_mode'];
+$hub_challenge = $_GET['hub_challenge'];
+$hub_verify_token = $_GET['hub_verify_token'];
 
 switch ($hub_mode) {
   case 'subscribe':
