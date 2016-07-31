@@ -46,12 +46,12 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $replyOption1->content_type = "text";
     $replyOption1->title = "Option 1";
     $replyOption1->payload = "Option 1";
-    $replyOptions[]=$replyOption;
+    $replyOptions[]=$replyOption1;
     $replyOption2 = new stdClass;
     $replyOption2->content_type = "text";
     $replyOption2->title = "Option 2";
     $replyOption2->payload = "Option 2";
-    $replyOptions[]=$replyOption;
+    $replyOptions[]=$replyOption2;
     sendQuickReply($senderId,"Pick something",$replyOptions);
     break;
 }
