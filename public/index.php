@@ -33,34 +33,40 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $entry = $entries[0];
     $messagings = $entry->messaging;
     $messaging = $messagings[0];
-    $message = $messaging->message;
     $senderId = $messaging->sender->id;
-    error_log("sender id = ".$senderId);
-    error_log("message text = ".$message->text);
+    $message = $messaging->message;
+    $person = getUserProfile($senderId);
+    if (isset($message->quick_reply)) {
+      $payload = $message->quick_reply->payload;
+      $replyText = $payload.' was clicked, '.$person->first_name;
+      sendMessage($senderId,$replyText);
+    } else {
+      $replyText = $message->text.' received, '.$person->first_name;
+      sendMessage($senderId,$replyText);
+      $replyOption1 = new stdClass;
+      $replyOption1->content_type = "text";
+      $replyOption1->title = "Option 1";
+      $replyOption1->payload = "Option 1";
+      $replyOptions[]=$replyOption1;
+      $replyOption2 = new stdClass;
+      $replyOption2->content_type = "text";
+      $replyOption2->title = "Option 2";
+      $replyOption2->payload = "Option 2";
+      $replyOptions[]=$replyOption2;
+      sendQuickReply($senderId,"Pick something",$replyOptions);
+    }
     // exit;
     //$recipientId = $messaging->recipient->id;
-    $person = getUserProfile($senderId);
-    $replyText = $message->text.' received, '.$person->first_name;
-    sendMessage($senderId,$replyText);
-    $replyOption1 = new stdClass;
-    $replyOption1->content_type = "text";
-    $replyOption1->title = "Option 1";
-    $replyOption1->payload = "Option 1";
-    $replyOptions[]=$replyOption1;
-    $replyOption2 = new stdClass;
-    $replyOption2->content_type = "text";
-    $replyOption2->title = "Option 2";
-    $replyOption2->payload = "Option 2";
-    $replyOptions[]=$replyOption2;
-    sendQuickReply($senderId,"Pick something",$replyOptions);
     break;
 }
 
 function sendMessage($recipientId,$text) {
-    $sendArray = array();
-    $sendArray['recipient']['id']=$recipientId;
-    $sendArray['message']['text']=$text;
-    return postSomething($sendArray);
+  error_log("sender id = ".$recipientId);
+  error_log("message text = ".$text);
+  $sendArray = array();
+  $sendArray['recipient']['id']=$recipientId;
+  $sendArray['message']['text']=$text;
+  return postSomething($sendArray);
 }
 
 function getUserProfile($userId) {
