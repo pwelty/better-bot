@@ -35,7 +35,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $messaging = $messagings[0];
     $senderId = $messaging->sender->id;
     $person = getUserProfile($senderId);
-    error_log("sender id = ".$recipientId);
+    error_log("entry id = ".$entry->id);
+    error_log("sender id = ".$senderId);
     error_log("person = ".$person->first_name);
 
 
