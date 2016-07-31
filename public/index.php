@@ -25,15 +25,17 @@ switch ($_SERVER['REQUEST_METHOD']) {
     break;
   case 'POST':
     $post = file_get_contents('php://input');
-    error_log($post);
+    error_log('--'.$post.'--');
     $postObj = json_decode($post);
-    $entry = $postObj->entry;
     error_log(print_r($postObj,true));
+    exit;
+    $entry = $postObj->entry;
     $messaging = $entry->messaging;
     $message = $messaging->message;
-    $recipientId = $messaging->recipientId;
+    $senderID = $messaging->sender->id;
+    $recipientId = $messaging->recipient->id;
     $replyText = $message->text.' received';
-    sendMessage($recipientId,$replyText);
+    sendMessage($senderId,$replyText);
     break;
 }
 
