@@ -35,6 +35,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $messaging = $messagings[0];
     $senderId = $messaging->sender->id;
     $person = getUserProfile($senderId);
+    error_log("person = ".$person->first_name);
 
 
     if (isset($messaging->message)) {
