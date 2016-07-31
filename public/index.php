@@ -37,7 +37,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
 }
 
 function sendMessage($recipientId,$text) {
-    $sendArray = ();
+    $sendArray = array();
     $sendArray['recipient']['id']=$recipientId;
     $sendArray['message']['text']=$text;
     return postSomething($sendArray);
