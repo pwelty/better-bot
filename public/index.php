@@ -39,33 +39,58 @@ switch ($_SERVER['REQUEST_METHOD']) {
     if (isset($message->quick_reply)) {
       $payload = $message->quick_reply->payload;
       $replyText = $payload.' was clicked, '.$person->first_name;
-      sendMessage($senderId,$replyText);
+      sendTextMessage($senderId,$replyText);
     } else {
-      $replyText = $message->text.' received, '.$person->first_name;
-      sendMessage($senderId,$replyText);
-      $replyOption1 = new stdClass;
-      $replyOption1->content_type = "text";
-      $replyOption1->title = "Option 1";
-      $replyOption1->payload = "Option 1";
-      $replyOptions[]=$replyOption1;
-      $replyOption2 = new stdClass;
-      $replyOption2->content_type = "text";
-      $replyOption2->title = "Option 2";
-      $replyOption2->payload = "Option 2";
-      $replyOptions[]=$replyOption2;
-      sendQuickReply($senderId,"Pick something",$replyOptions);
+      if (strtolower($message->text)=='help') {
+        $button1 = new stdClass;
+        $button1->type = 'web_url';
+        $button1->url = 'http://www.livingyourbetter.com/';
+        $button1->title = 'Visit the LYB website';
+        $button2 = new stdClass;
+        $button2->type = 'postback';
+        $button2->title = 'What\'s Beachbody?';
+        $button2->payload = 'BB_Q';
+        $buttons = array($button1,$button2);
+        sendButtonTemplate($senderId,'So you need some help? No problem! What can I do for you?',$buttons);
+      } else {
+        $replyText = $message->text.' received, '.$person->first_name;
+        sendTextMessage($senderId,$replyText);
+        $replyOption1 = new stdClass;
+        $replyOption1->content_type = "text";
+        $replyOption1->title = "Option 1";
+        $replyOption1->payload = "Option 1";
+        $replyOptions[]=$replyOption1;
+        $replyOption2 = new stdClass;
+        $replyOption2->content_type = "text";
+        $replyOption2->title = "Option 2";
+        $replyOption2->payload = "Option 2";
+        $replyOptions[]=$replyOption2;
+        sendQuickReply($senderId,"Pick something",$replyOptions);
+      }
     }
     // exit;
     //$recipientId = $messaging->recipient->id;
     break;
 }
 
-function sendMessage($recipientId,$text) {
+function sendButtonTemplate($recipientId,$text,$buttons) {
+  $message = new stdClass;
+  $message->attachment->type='template';
+  $message->attachment->payload->template_type = 'buttons';
+  $message->attachment->payload->text = ;
+}
+function sendTextMessage($recipientId,$text) {
+  $message = new stdClass;
+  $message->text = $text;
+  sendMessage($recipientId,$message);
+}
+
+function sendMessage($recipientId,$message) {
   error_log("sender id = ".$recipientId);
-  error_log("message text = ".$text);
+  error_log("message = ".json_encode($text));
   $sendArray = array();
   $sendArray['recipient']['id']=$recipientId;
-  $sendArray['message']['text']=$text;
+  $sendArray['message'] = $message;
   return postSomething($sendArray);
 }
 
@@ -83,11 +108,15 @@ function getUserProfile($userId) {
 }
 
 function sendQuickReply($recipientId,$text,$quickReplies) {
-  $sendArray = array();
-  $sendArray['recipient']['id']=$recipientId;
-  $sendArray['message']['text']=$text;
-  $sendArray['message']['quick_replies']=$quickReplies;
-  return postSomething($sendArray);
+  $message = new stdClass;
+  $message->text = $text;
+  $message->quick_replies = $quickReplies;
+  sendMessage($recipientId,$message);
+  // $sendArray = array();
+  // $sendArray['recipient']['id']=$recipientId;
+  // $sendArray['message']['text']=$text;
+  // $sendArray['message']['quick_replies']=$quickReplies;
+  // return postSomething($sendArray);
 }
 
 function postSomething($messageData) {
