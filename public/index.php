@@ -27,12 +27,15 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $post = file_get_contents('php://input');
     error_log('--'.$post.'--');
     $postObj = json_decode($post);
-    error_log(print_r($postObj,true));
-    exit;
+    // error_log(print_r($postObj,true));
+    // exit;
     $entry = $postObj->entry;
     $messaging = $entry->messaging;
     $message = $messaging->message;
     $senderID = $messaging->sender->id;
+    error_log("sender id = ".$senderID);
+    error_log("message text = ".$message->text);
+    exit;
     $recipientId = $messaging->recipient->id;
     $replyText = $message->text.' received';
     sendMessage($senderId,$replyText);
