@@ -39,7 +39,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
     error_log("message text = ".$message->text);
     // exit;
     //$recipientId = $messaging->recipient->id;
-    $replyText = $message->text.' received';
+    $person = getUserProfile($senderId);
+    $replyText = $message->text.' received, '.$person->first_name;
     sendMessage($senderId,$replyText);
     break;
 }
@@ -49,6 +50,14 @@ function sendMessage($recipientId,$text) {
     $sendArray['recipient']['id']=$recipientId;
     $sendArray['message']['text']=$text;
     return postSomething($sendArray);
+}
+
+function getUserProfile($userId) {
+  // https://graph.facebook.com/v2.6/<USER_ID>?access_token=PAGE_ACCESS_TOKEN
+  $url = 'https://graph.facebook.com/v2.6/'.$userId.'?access_token='.getenv('PAGE_ACCESS_TOKEN');
+  $response = file_get_contents($url);
+  $person = json_decode($response);
+  return $person;
 }
 
 function postSomething($messageData) {
