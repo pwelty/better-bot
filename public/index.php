@@ -77,7 +77,9 @@ function sendButtonTemplate($recipientId,$text,$buttons) {
   $message = new stdClass;
   $message->attachment->type='template';
   $message->attachment->payload->template_type = 'buttons';
-  $message->attachment->payload->text = ;
+  $message->attachment->payload->text = $text;
+  $message->attachment->payload->buttons = $buttons;
+  sendMessage($recipientId,$message);
 }
 function sendTextMessage($recipientId,$text) {
   $message = new stdClass;
