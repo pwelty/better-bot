@@ -35,6 +35,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     $messaging = $messagings[0];
     $senderId = $messaging->sender->id;
     $person = getUserProfile($senderId);
+    error_log("sender id = ".$recipientId);
     error_log("person = ".$person->first_name);
 
 
@@ -103,8 +104,7 @@ function sendTextMessage($recipientId,$text) {
 }
 
 function sendMessage($recipientId,$message) {
-  error_log("sender id = ".$recipientId);
-  error_log("message = ".json_encode($text));
+  error_log("message = ".json_encode($message));
   $sendArray = array();
   $sendArray['recipient']['id']=$recipientId;
   $sendArray['message'] = $message;
